@@ -1,50 +1,49 @@
 #!/usr/bin/python3
-'''A simple Flask web application.
-'''
+""" Python script that uses the Flask framework to start a web application:
+The application listens on 0.0.0.0, port 5000.
+Routes:
+    /states: HTML page with a list of all State objects.
+    /states/<id>: HTML page displaying the given state with <id>.
+"""
+from models import storage
 from flask import Flask, render_template
 
-from models import storage
-from models.state import State
-
-
+# Creates an instance of a Flask web application.
 app = Flask(__name__)
-'''The Flask application instance.'''
-app.url_map.strict_slashes = False
 
 
-@app.route('/states')
-@app.route('/states/<id>')
-def states(id=None):
-    '''The states page.'''
-    states = None
-    state = None
-    all_states = list(storage.all(State).values())
-    case = 404
-    if id is not None:
-        res = list(filter(lambda x: x.id == id, all_states))
-        if len(res) > 0:
-            state = res[0]
-            state.cities.sort(key=lambda x: x.name)
-            case = 2
-    else:
-        states = all_states
-        for state in states:
-            state.cities.sort(key=lambda x: x.name)
-        states.sort(key=lambda x: x.name)
-        case = 1
-    ctxt = {
-        'states': states,
-        'state': state,
-        'case': case
-    }
-    return render_template('9-states.html', **ctxt)
+# Defines a route for the web application
+@app.route("/states", strict_slashes=False)
+def states():
+    """This function is executed when a user navigates to the /states route.
+    It retrieves all “State” objects from the storage, and then uses the
+    render_template function to generate an HTML page that lists all of
+    these states.
+    """
+    states = storage.all("State")
+    return render_template("9-states.html", state=states)
+
+
+# Defines another route for the web application that includes a variable
+#  part <id>
+@app.route("/states/<id>", strict_slashes=False)
+def states_id(id):
+    """
+    This function is executed when a user navigates to the /states/<id> route
+    """
+    for state in storage.all("State").values():
+        if state.id == id:
+            return render_template("9-states.html", state=state)
+    return render_template("9-states.html")
 
 
 @app.teardown_appcontext
-def flask_teardown(exc):
-    '''The Flask app/request context end event listener.'''
+def teardown(exc):
+    """Remove the current SQLAlchemy session."""
     storage.close()
 
 
+# Starts the Flask web server if the script is being run directly (as opposed
+#   to being imported as a module).
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port='5000')
+    app.run(host="0.0.0.0", port="5000")
