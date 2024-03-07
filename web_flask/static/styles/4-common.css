@@ -1,27 +1,20 @@
-html {
-    height: 100%;
+* {
+  padding: 0;
+  margin: 0;
+}
+
+ul {
+  list-style: none;
 }
 
 body {
-    display: grid;
-    margin: 0;
-    padding: 0;
-    min-height: 100%;
-    grid-template-areas:
-    "header"
-    "container"
-    "footer";
-    grid-template-rows: calc(70px + 1px) 1fr calc(60px + 1px);
-    color: #484848;
-    font-family: Circular, "Helvetica Neue", Helvetica, Arial, sans-serif;
-    font-size: 14px;
+  color: #484848;
+  font-family: Circular, "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 14px;
+  overflow-x: hidden;
 }
 
 .container {
-    width: 100%;
-    max-width: 1000px;
-    margin: 30px 0;
-    grid-area: container;
-    align-self: stretch;
-    justify-self: center;
+  max-width: 1000px;
+  margin: 30px auto 60px;
 }
